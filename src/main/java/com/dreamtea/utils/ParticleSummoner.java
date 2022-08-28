@@ -19,7 +19,7 @@ import java.util.List;
 public interface ParticleSummoner {
   void spawnParticles(ServerWorld world, Vec3d move, double x, double y, double z);
 
-  static void spawnParticles(ServerPlayerEntity player, ParticleSummoner summoner){
+  public static void spawnParticles(ServerPlayerEntity player, ParticleSummoner summoner){
     summoner.spawnParticles(player.getWorld(), null, player.getX(), player.getY(), player.getZ());
   }
   List<ParticleSummoner> particles = new ArrayList<>();
@@ -59,7 +59,7 @@ public interface ParticleSummoner {
   public static final ParticleSummoner GLOW_SQUID_INK = gen(ParticleTypes.GLOW_SQUID_INK, 2);
   public static final ParticleSummoner GLOW = gen(ParticleTypes.GLOW, 20);
   public static final ParticleSummoner END_ROD = gen(ParticleTypes.END_ROD, 10 ,.1,.1,.1, 0.01);
-  public static final ParticleSummoner EXPLOSION = gen(ParticleTypes.EXPLOSION, 1 ,0,0,0, 0);
+  //public static final ParticleSummoner EXPLOSION = gen(ParticleTypes.EXPLOSION, 1 ,0,0,0, 0);
   public static final ParticleSummoner ENCHANT = gen(ParticleTypes.ENCHANT, 20);
   public static final ParticleSummoner SOULS = gen(ParticleTypes.SOUL, 5);
   public static final ParticleSummoner SNEEZE = gen(ParticleTypes.SNEEZE, 5);

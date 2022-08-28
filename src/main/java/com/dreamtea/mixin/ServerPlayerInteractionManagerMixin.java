@@ -13,10 +13,5 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin {
-  @Shadow @Final protected ServerPlayerEntity player;
 
-  @Inject(method = "setGameMode", at = @At("RETURN"))
-  public void onGamemodeChange(GameMode gameMode, GameMode previousGameMode, CallbackInfo ci){
-    ((ISpectate)this.player).getSpectateManager().trackDeadAndSpectate();
-  }
 }

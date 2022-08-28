@@ -4,6 +4,7 @@
   "package": "com.dreamtea.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ArmorStandMixin",
     "EntityMixin",
     "PlayerManagerMixin",
     "ServerPlayerEntityMixin",

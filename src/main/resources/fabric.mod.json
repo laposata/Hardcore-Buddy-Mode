@@ -19,6 +19,9 @@
   "entrypoints": {
     "main": [
       "com.dreamtea.HardcoreBuddyMode"
+    ],
+    "fabric-datagen": [
+      "com.dreamtea.HardcoreBuddyModeData"
     ]
   },
   "mixins": [

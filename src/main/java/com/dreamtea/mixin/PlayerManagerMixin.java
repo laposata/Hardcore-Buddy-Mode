@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
@@ -39,10 +40,10 @@ public abstract class PlayerManagerMixin implements IManageDeadSpectators {
     return false;
   }
 
-  @Inject(method = "respawnPlayer", at = @At("RETURN"))
-  public void setAliveOnRespawn(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir){
-    if(player instanceof ISpectate spectate){
-      spectate.getSpectateManager().setDeadSpectate(alive);
+  @Inject(method = "remove", at = @At("TAIL"))
+  public void remove(ServerPlayerEntity player, CallbackInfo ci){
+    if(player instanceof ISpectate){
+      ((ISpectate) player).getSpectateManager().discardHitbox();
     }
   }
 }

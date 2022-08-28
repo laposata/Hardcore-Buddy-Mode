@@ -1,12 +1,16 @@
 package com.dreamtea.spectator;
 
+import com.dreamtea.imixin.IOverrideDimension;
 import com.dreamtea.utils.ParticleSummoner;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.UUID;
 
 
 public class SpectateManager {
@@ -16,33 +20,40 @@ public class SpectateManager {
   private static final String DEAD_SPECTATE_KEY = "deadSpectate";
   private final PlayerEntity player;
   private SpectatorHitbox hitbox;
-
   public SpectateManager(PlayerEntity player){
     this.deadSpectate = true;
     this.player = player;
     playerParticle = ParticleSummoner.getRandomParticle();
-    this.hitbox = SpectatorHitbox.summon(player);
-    this.hitbox.remove(Entity.RemovalReason.KILLED);
-    trackDeadAndSpectate();
   }
 
-  public void exist(Vec3d move){
+  public void exist(MovementType movementType, Vec3d move){
     if(isActive()){
-      hitbox.teleportToEntity();
+      if(hitbox == null && (movementType != MovementType.SELF && move.lengthSquared() < .0001)){
+        this.hitbox = new SpectatorHitbox(this.player, (ServerWorld) this.player.getWorld());
+      }
+      if((hitbox != null && hitbox.getRemovalReason() != null) || move.lengthSquared() > .1){
+        discardHitbox();
+      }
       player.noClip = false;
       if(player instanceof ServerPlayerEntity sp){
-        playerParticle.spawnParticles(sp.getWorld(), move, hitbox.getX(), hitbox.getY(), hitbox.getZ());
+        playerParticle.spawnParticles(sp.getWorld(), move, sp.getX(), sp.getY() + .5, sp.getZ());
       }
     }
   }
 
-  public void trackDeadAndSpectate(){
-    if(isActive()){
-      this.hitbox.remove(Entity.RemovalReason.KILLED);
-      this.hitbox = SpectatorHitbox.summon(this.player);
-    } else {
-      this.hitbox.remove(Entity.RemovalReason.KILLED);
+  public UUID getHitboxUUID(){
+    if(hitbox == null){
+      return null;
     }
+    return this.hitbox.getUuid();
+  }
+
+
+  public void discardHitbox(){
+    if(this.hitbox != null){
+      this.hitbox.discard();
+    }
+    this.hitbox = null;
   }
 
   public void setDeadSpectate(boolean deadSpectate){
@@ -51,7 +62,6 @@ public class SpectateManager {
     } else if (player instanceof ServerPlayerEntity) {
       this.deadSpectate = false;
     }
-    trackDeadAndSpectate();
   }
 
   public boolean isActive(){

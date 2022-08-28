@@ -21,7 +21,7 @@ public class Revive {
     if(reviving.isSpectator() && reviving instanceof ISpectate spect && spect.getSpectateManager().getDeadSpectate()){
       if(!savior.isSpectator() && itemIsIn(savior.getMainHandStack(), ReviveItem.REVIVE_ITEMS)){
         if(reviving instanceof ServerPlayerEntity deadPlayer){
-          deadPlayer.interactionManager.changeGameMode(GameMode.SURVIVAL);
+          deadPlayer.changeGameMode(GameMode.SURVIVAL);
           deadPlayer.clearStatusEffects();
           deadPlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 900, 2), savior);
           deadPlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 900), savior);
