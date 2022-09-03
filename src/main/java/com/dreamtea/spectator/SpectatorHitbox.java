@@ -4,10 +4,8 @@ import com.dreamtea.revive.Revive;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -15,7 +13,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
+
 
 public class SpectatorHitbox extends ArmorStandEntity {
   private final Entity entity;
@@ -28,15 +26,15 @@ public class SpectatorHitbox extends ArmorStandEntity {
   }
 
   private void create(){
-    //standin.setInvisible(true);
-
+ //   this.setInvisible(true);
     this.calculateDimensions();
     this.setPosition(entity.getX(), entity.getY(), entity.getZ());
     this.setNoGravity(true);
     this.setCustomName(Text.of("*"+entity.getDisplayName().getString()+"*"));
     this.setSilent(true);
     this.setCustomNameVisible(true);
-    this.startRiding(entity, true);
+    this.setNoDrag(true);
+    this.setInvulnerable(true);
     world.spawnEntity(this);
   }
 
@@ -71,4 +69,8 @@ public class SpectatorHitbox extends ArmorStandEntity {
     return new EntityDimensions(2f, -2f, true);
   }
 
+  @Override
+  public boolean shouldDropLoot(){
+    return false;
+  }
 }

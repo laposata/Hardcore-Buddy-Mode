@@ -1,5 +1,6 @@
 package com.dreamtea.spectator;
 
+import com.dreamtea.imixin.ISetDimensions;
 import com.dreamtea.utils.ParticleSummoner;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
@@ -32,8 +33,10 @@ public class SpectateManager {
         trackDeadAndSpectate();
       }
       player.noClip = false;
+      hitbox.teleportToEntity();
       if(player instanceof ServerPlayerEntity sp){
-        playerParticle.spawnParticles(sp.getWorld(), move, hitbox.getX(), hitbox.getY() - 1.5, hitbox.getZ());
+        Vec3d offset = player.getRotationVector().normalize().multiply(.75);
+        playerParticle.spawnParticles(sp.getWorld(), move, player.getX() - offset.getX(), player.getY() + 1, player.getZ() - offset.getZ());
       }
     }
   }
@@ -41,8 +44,10 @@ public class SpectateManager {
   public void trackDeadAndSpectate(){
     if(this.hitbox != null){
       killHitbox();
+      ((ISetDimensions)this.player).setDimensionOverride(null);
     }
     if(isActive()){
+      ((ISetDimensions)this.player).setDimensionOverride(.2f,.8f, true);
       this.hitbox = new SpectatorHitbox(player,  (ServerWorld) this.player.getWorld());
     }
   }
@@ -60,10 +65,11 @@ public class SpectateManager {
 
   public void killHitbox(){
     player.removeAllPassengers();
-    hitbox.remove(Entity.RemovalReason.DISCARDED);
-    this.hitbox.emitGameEvent(GameEvent.ENTITY_DIE);
-    this.hitbox = null;
-
+    if (hitbox != null) {
+      hitbox.remove(Entity.RemovalReason.DISCARDED);
+      this.hitbox.emitGameEvent(GameEvent.ENTITY_DIE);
+      this.hitbox = null;
+    }
   }
 
   public boolean isActive(){
