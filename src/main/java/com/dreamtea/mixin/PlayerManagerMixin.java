@@ -38,11 +38,4 @@ public abstract class PlayerManagerMixin implements IManageDeadSpectators {
     }
     return false;
   }
-
-  @Inject(method = "respawnPlayer", at = @At("RETURN"))
-  public void setAliveOnRespawn(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir){
-    if(player instanceof ISpectate spectate){
-      spectate.getSpectateManager().setDeadSpectate(alive);
-    }
-  }
 }

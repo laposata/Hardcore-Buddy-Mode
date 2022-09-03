@@ -6,7 +6,9 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.event.GameEvent;
 
 
 public class SpectateManager {
@@ -21,37 +23,47 @@ public class SpectateManager {
     this.deadSpectate = true;
     this.player = player;
     playerParticle = ParticleSummoner.getRandomParticle();
-    this.hitbox = SpectatorHitbox.summon(player);
-    this.hitbox.remove(Entity.RemovalReason.KILLED);
     trackDeadAndSpectate();
   }
 
   public void exist(Vec3d move){
     if(isActive()){
-      hitbox.teleportToEntity();
+      if(hitbox == null){
+        trackDeadAndSpectate();
+      }
       player.noClip = false;
       if(player instanceof ServerPlayerEntity sp){
-        playerParticle.spawnParticles(sp.getWorld(), move, hitbox.getX(), hitbox.getY(), hitbox.getZ());
+        playerParticle.spawnParticles(sp.getWorld(), move, hitbox.getX(), hitbox.getY() - 1.5, hitbox.getZ());
       }
     }
   }
 
   public void trackDeadAndSpectate(){
+    if(this.hitbox != null){
+      killHitbox();
+    }
     if(isActive()){
-      this.hitbox.remove(Entity.RemovalReason.KILLED);
-      this.hitbox = SpectatorHitbox.summon(this.player);
-    } else {
-      this.hitbox.remove(Entity.RemovalReason.KILLED);
+      this.hitbox = new SpectatorHitbox(player,  (ServerWorld) this.player.getWorld());
     }
   }
 
   public void setDeadSpectate(boolean deadSpectate){
     if(deadSpectate && player instanceof ServerPlayerEntity){
       this.deadSpectate = true;
+      trackDeadAndSpectate();
     } else if (player instanceof ServerPlayerEntity) {
       this.deadSpectate = false;
+      trackDeadAndSpectate();
     }
-    trackDeadAndSpectate();
+
+  }
+
+  public void killHitbox(){
+    player.removeAllPassengers();
+    hitbox.remove(Entity.RemovalReason.DISCARDED);
+    this.hitbox.emitGameEvent(GameEvent.ENTITY_DIE);
+    this.hitbox = null;
+
   }
 
   public boolean isActive(){

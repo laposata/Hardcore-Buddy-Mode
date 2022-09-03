@@ -20,4 +20,5 @@ public abstract class EntityMixin {
       p.getSpectateManager().exist(movement);
     }
   }
+
 }

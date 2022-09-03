@@ -43,6 +43,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements IS
     spectator.writeSpectate(nbt);
   }
 
+  @Inject(method = "onDisconnect", at = @At("RETURN"))
+  public void onDisconnectRemoveSpectate(CallbackInfo ci){
+    spectator.killHitbox();
+  }
+
   @Override
   public EntityDimensions getDimensions(EntityPose pose){
     if(spectator.isActive()){
@@ -52,6 +57,15 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements IS
   }
 
   @Override
+  public float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
+    if(spectator != null && spectator.isActive()){
+      return -1;
+    }
+    return super.getActiveEyeHeight(pose, dimensions);
+  }
+
+
+    @Override
   public SpectateManager getSpectateManager(){
     return this.spectator;
   }
