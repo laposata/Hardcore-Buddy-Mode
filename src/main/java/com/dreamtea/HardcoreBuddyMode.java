@@ -1,6 +1,7 @@
 package com.dreamtea;
 
 import com.dreamtea.commands.OpSpectate;
+import com.dreamtea.gamerules.GRRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.command.CommandManager;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ public class HardcoreBuddyMode implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		OpSpectate.init();
+		GRRegistry.register();
 		LOGGER.info("Hello Fabric world!");
 	}
 }

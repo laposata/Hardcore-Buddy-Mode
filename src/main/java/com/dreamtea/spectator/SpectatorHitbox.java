@@ -26,7 +26,7 @@ public class SpectatorHitbox extends ArmorStandEntity {
   }
 
   private void create(){
- //   this.setInvisible(true);
+    this.setInvisible(true);
     this.calculateDimensions();
     this.setPosition(entity.getX(), entity.getY(), entity.getZ());
     this.setNoGravity(true);
@@ -38,12 +38,15 @@ public class SpectatorHitbox extends ArmorStandEntity {
     world.spawnEntity(this);
   }
 
-  public void teleportToEntity(){
+  public void teleportToEntity(Vec3d offset){
+    if(offset == null){
+      offset = new Vec3d(0,0,0);
+    }
     if(entity.getWorld() instanceof ServerWorld serverWorld
       && (World)serverWorld != this.getWorld()){
       this.moveToWorld(serverWorld);
     }
-    this.setPosition(entity.getX(), entity.getY(), entity.getZ());
+    this.setPosition(entity.getX() + offset.x, entity.getY() + offset.y, entity.getZ() + offset.z);
     this.updatePositionAndAngles(entity.getX(), entity.getY(), entity.getZ(), entity.getYaw(), entity.getPitch());
 
   }

@@ -4,10 +4,13 @@
   "package": "com.dreamtea.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BeaconBlockEntityMixin",
+    "BeamSegmentMixin",
     "EntityMixin",
     "PlayerManagerMixin",
     "ServerPlayerEntityMixin",
-    "ServerPlayerInteractionManagerMixin"
+    "ServerPlayerInteractionManagerMixin",
+    "ServerWorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '0.12-SNAPSHOT'
 	id 'maven-publish'
+	id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -73,5 +74,31 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+	}
+}
+
+curseforge {
+	if(!System.getenv().containsKey("apikey")){
+		System.out.println("Could not upload, api key not found")
+		return
+	} else {
+		apiKey = System.getenv("apikey")
+		project {
+			id = '669398'
+			changelog = "init"
+			releaseType = 'release'
+			addGameVersion '1.19.2'
+
+			mainArtifact(remapJar) {
+				displayName = "$project.mod_name: $project.mod_version"
+			}
+			afterEvaluate {
+				tasks.curseforge.dependsOn remapJar
+			}
+
+		}
+		options {
+			forgeGradleIntegration = false
+		}
 	}
 }

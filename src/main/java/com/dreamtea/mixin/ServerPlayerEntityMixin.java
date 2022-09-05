@@ -1,11 +1,16 @@
 package com.dreamtea.mixin;
 
+import com.dreamtea.gamerules.DeathBeaconGamerule;
+import com.dreamtea.gamerules.DeathChunkloadGamerule;
+import com.dreamtea.gamerules.TotemDropOnDeathGamerule;
 import com.dreamtea.imixin.ISpectate;
 import com.dreamtea.spectator.SpectateManager;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.MinecraftServer;
@@ -18,6 +23,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity implements ISpectate {
@@ -48,6 +55,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements IS
     spectator.killHitbox();
   }
 
+  @Inject(method = "onDeath", at = @At("RETURN"))
+  public void onDeathAbideByRules(DamageSource damageSource, CallbackInfo ci){
+    ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+    List<ItemStack> drops = TotemDropOnDeathGamerule.dropTotem(player);
+    for(ItemStack drop: drops){
+      ((ServerPlayerEntity)(Object) this).dropStack(drop);
+    }
+//    DeathChunkloadGamerule.keepChunksLoaded(player);
+//    DeathBeaconGamerule.summonBeacon(player);
+  }
   @Override
   public EntityDimensions getDimensions(EntityPose pose){
     if(spectator.isActive()){
@@ -65,7 +82,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements IS
   }
 
 
-    @Override
+  @Override
   public SpectateManager getSpectateManager(){
     return this.spectator;
   }

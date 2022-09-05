@@ -33,9 +33,10 @@ public class SpectateManager {
         trackDeadAndSpectate();
       }
       player.noClip = false;
-      hitbox.teleportToEntity();
+
       if(player instanceof ServerPlayerEntity sp){
         Vec3d offset = player.getRotationVector().normalize().multiply(.75);
+        hitbox.teleportToEntity(offset);
         playerParticle.spawnParticles(sp.getWorld(), move, player.getX() - offset.getX(), player.getY() + 1, player.getZ() - offset.getZ());
       }
     }
