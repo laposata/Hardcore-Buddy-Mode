@@ -10,13 +10,18 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerInteractionManager.class)
-public class ServerPlayerInteractionManagerMixin {
+public abstract class ServerPlayerInteractionManagerMixin {
   @Shadow @Final protected ServerPlayerEntity player;
 
-  @Inject(method = "setGameMode", at = @At("RETURN"))
-  public void onGamemodeChange(GameMode gameMode, GameMode previousGameMode, CallbackInfo ci){
-    ((ISpectate)this.player).getSpectateManager().trackDeadAndSpectate();
+  @Shadow public abstract boolean changeGameMode(GameMode gameMode);
+
+  @Inject(method = "changeGameMode", at = @At("RETURN"))
+  public void onGamemodeChange(GameMode gameMode, CallbackInfoReturnable<Boolean> cir){
+    if(cir.getReturnValue() && this.player instanceof ISpectate spectator){
+      spectator.getSpectateManager().trackDeadAndSpectate();
+    }
   }
 }

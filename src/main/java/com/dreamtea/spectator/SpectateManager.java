@@ -29,15 +29,19 @@ public class SpectateManager {
 
   public void exist(Vec3d move){
     if(isActive()){
-      if(hitbox == null){
+      if(hitbox == null || hitbox.getRemovalReason() != null){
         trackDeadAndSpectate();
       }
       player.noClip = false;
 
       if(player instanceof ServerPlayerEntity sp){
-        Vec3d offset = player.getRotationVector().normalize().multiply(.75);
+        Vec3d offset = player.getRotationVector();
+        offset = offset.multiply(1,0,1);
+        offset = offset.normalize().multiply(-1.2);
+        offset = offset.add(0, 1, 0);
+        offset = offset.add(player.getX(), player.getY(), player.getZ());
         hitbox.teleportToEntity(offset);
-        playerParticle.spawnParticles(sp.getWorld(), move, player.getX() - offset.getX(), player.getY() + 1, player.getZ() - offset.getZ());
+        playerParticle.spawnParticles(sp.getWorld(), move, offset.getX(), offset.getY(), offset.getZ());
       }
     }
   }

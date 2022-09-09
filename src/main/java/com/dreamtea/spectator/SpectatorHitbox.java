@@ -1,5 +1,6 @@
 package com.dreamtea.spectator;
 
+import com.dreamtea.imixin.ISpectate;
 import com.dreamtea.revive.Revive;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -40,14 +41,13 @@ public class SpectatorHitbox extends ArmorStandEntity {
 
   public void teleportToEntity(Vec3d offset){
     if(offset == null){
-      offset = new Vec3d(0,0,0);
+      return;
     }
     if(entity.getWorld() instanceof ServerWorld serverWorld
       && (World)serverWorld != this.getWorld()){
       this.moveToWorld(serverWorld);
     }
-    this.setPosition(entity.getX() + offset.x, entity.getY() + offset.y, entity.getZ() + offset.z);
-    this.updatePositionAndAngles(entity.getX(), entity.getY(), entity.getZ(), entity.getYaw(), entity.getPitch());
+    this.refreshPositionAndAngles(offset.getX(), offset.getY(), offset.getZ(), entity.getYaw(), entity.getPitch());
 
   }
 
@@ -76,4 +76,5 @@ public class SpectatorHitbox extends ArmorStandEntity {
   public boolean shouldDropLoot(){
     return false;
   }
+
 }

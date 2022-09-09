@@ -11,6 +11,7 @@ import net.minecraft.world.GameRules;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dreamtea.gamerules.TotemDropConditionsGamerule.TOTEM_DROP_CONDITIONAL;
 import static net.minecraft.item.Items.TOTEM_OF_UNDYING;
 
 public class TotemDropOnDeathGamerule {
@@ -24,6 +25,22 @@ public class TotemDropOnDeathGamerule {
 
   public static List<ItemStack> dropTotem(ServerPlayerEntity dieing){
     double drops = dieing.getWorld().getGameRules().get(TOTEM_DROP_ON_DEATH).get();
+    float multiplier = 1f;
+    multiplier *= TotemDropDistanceTraveledMinGamerule.conditionMet(dieing);
+    multiplier *= TotemDropMinAgeGamerule.conditionMet(dieing);
+    multiplier *= TotemDropMinTimeSinceLastDeathGamerule.conditionMet(dieing);
+    switch(dieing.getWorld().getGameRules().get(TOTEM_DROP_CONDITIONAL).get()){
+      case ALWAYS -> {
+        multiplier = 1f;
+      }
+      case PROPORTIONAL -> {}
+      case REQUIRED -> {
+        if(multiplier != 1f){
+          multiplier = 0;
+        }
+      }
+    }
+    drops *= multiplier;
     List<ItemStack> totems  = new ArrayList<>();
     for(;drops >= 1; drops --){
       totems.add(TOTEM_OF_UNDYING.getDefaultStack());
@@ -36,4 +53,6 @@ public class TotemDropOnDeathGamerule {
     }
     return totems;
   }
+
+
 }

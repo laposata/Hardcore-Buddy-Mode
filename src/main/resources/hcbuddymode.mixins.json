@@ -4,6 +4,7 @@
   "package": "com.dreamtea.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ArmorStandEntityMixin",
     "BeaconBlockEntityMixin",
     "BeamSegmentMixin",
     "EntityMixin",

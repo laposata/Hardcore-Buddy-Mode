@@ -50,7 +50,7 @@ public class  OpSpectate  implements CommandRegistrationCallback{
       if (deadSpectate != playerManager.willDeadSpectate(gameProfile)) {
           playerManager.setDeadSpectate(gameProfile, deadSpectate);
           ++i;
-          source.sendFeedback(Text.translatable("commands.op.success", targets.iterator().next().getName()), true);
+          source.sendFeedback(Text.of(gameProfile.getName() + " made " + (deadSpectate? "dead": "op")), true);
       }
     }
     if (i == 0) {
