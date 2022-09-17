@@ -10,6 +10,8 @@ public class GRRegistry {
     TotemDropDistanceTraveledMinGamerule.registerGamerule();
     TotemDropMinTimeSinceLastDeathGamerule.registerGamerule();
     TotemDropConditionsGamerule.registerGamerule();
+    TotemDefaultDropChanceGamerule.registerGamerule();
+    DeathPenaltyGamerule.registerGamerule();
     //DeathChunkloadGamerule.registerGamerule();
     //DeathBeaconGamerule.registerGamerule();
   }

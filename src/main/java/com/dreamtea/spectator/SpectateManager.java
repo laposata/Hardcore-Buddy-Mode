@@ -17,16 +17,25 @@ public class SpectateManager {
   private boolean deadSpectate;
   ParticleSummoner playerParticle;
   private static final String DEAD_SPECTATE_KEY = "deadSpectate";
+  private static final String TOTEMS_DROPPED_KEY = "totemsDropped";
   private final PlayerEntity player;
   private SpectatorHitbox hitbox;
+  private int totemsDropped = 0;
 
   public SpectateManager(PlayerEntity player){
     this.deadSpectate = true;
     this.player = player;
     playerParticle = ParticleSummoner.getRandomParticle();
     trackDeadAndSpectate();
+    totemsDropped = 0;
   }
 
+  public void dropTotem(){
+    this.totemsDropped ++;
+  }
+  public int getDrops(){
+    return this.totemsDropped;
+  }
   public void exist(Vec3d move){
     if(isActive()){
       if(hitbox == null || hitbox.getRemovalReason() != null){
@@ -87,9 +96,11 @@ public class SpectateManager {
 
   public void writeSpectate(NbtCompound nbt){
     nbt.putBoolean(DEAD_SPECTATE_KEY, deadSpectate);
+    nbt.putInt(TOTEMS_DROPPED_KEY, totemsDropped);
   }
 
   public void readSpectate(NbtCompound nbt){
     setDeadSpectate(!nbt.contains(DEAD_SPECTATE_KEY) || nbt.getBoolean(DEAD_SPECTATE_KEY));
+    this.totemsDropped = nbt.contains(TOTEMS_DROPPED_KEY) ? nbt.getInt(TOTEMS_DROPPED_KEY) : 0;
   }
 }
